@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@hono/node-server": "^1.14.1",
+    "@types/aws-lambda": "^8.10.149",
     "@types/jest": "^29.5.14",
     "@types/node": "22.7.9",
     "aws-cdk": "2.1013.0",
@@ -24,6 +25,7 @@
     "typescript": "~5.6.3"
   },
   "dependencies": {
+    "@hono/zod-openapi": "^0.19.6",
     "aws-cdk-lib": "2.190.0",
     "constructs": "^10.0.0",
     "hono": "^4.7.8"
