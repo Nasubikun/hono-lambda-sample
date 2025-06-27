@@ -9,7 +9,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "dev": "tsx lambda/index.ts"
+    "dev": "tsx lambda/index.ts --watch"
   },
   "devDependencies": {
     "@hono/node-server": "^1.14.1",
@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@hono/zod-openapi": "^0.19.6",
+    "@scalar/hono-api-reference": "^0.8.8",
     "aws-cdk-lib": "2.190.0",
     "constructs": "^10.0.0",
     "hono": "^4.7.8"

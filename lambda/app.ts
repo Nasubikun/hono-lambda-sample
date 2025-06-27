@@ -1,5 +1,5 @@
-import { S3Event } from 'aws-lambda';
-import { Hono } from 'hono'
+import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
+import { Scalar } from '@scalar/hono-api-reference';
 import { LambdaContext, LambdaEvent } from 'hono/aws-lambda';
 
 type Bindings = {
@@ -7,21 +7,34 @@ type Bindings = {
     lambdaContext: LambdaContext;
   };
 
-export const app = new Hono<{ Bindings: Bindings }>()
+export const app = new OpenAPIHono<{ Bindings: Bindings }>()
 
-app.get('/', (c) => {
-    if ('Records' in c.env.event) {
-        console.log('AWS TRIGGER EVENT - audio uploaded S3: ', c.env.event);
-        const s3Event = c.env.event as S3Event;
-        const bucket = s3Event.Records[0].s3.bucket.name;
-        const objectKey = decodeURIComponent(
-          s3Event.Records[0].s3.object.key.replace(/\+/g, ' '),
-        );
 
-        console.log('Bucket: ', bucket);
-        console.log('Object Key: ', objectKey);
-
-        return c.json({ message: 'Done handling new s3 event' }, 200);
-    }
-    return c.text('Hello Hono!');
+const helloRoute = createRoute({
+    method: 'get',
+    path: '/hello',
+    responses: {
+        200: {
+            description: 'Hello world',
+            content: {
+                'application/json': {
+                    schema: z.object({
+                        message: z.string(),
+                    }),
+                },
+            },
+        },
+    }, 
 })
+const routes = app.openapi(helloRoute, (c) => c.json({ message: 'Hello Hono!' }))
+
+export type AppType = typeof routes
+app.doc('/doc', {
+    openapi: '3.0.0',
+    info: {
+      version: '1.0.0',
+      title: 'My API',
+    },
+  });
+
+app.get('/scalar', Scalar({ url: '/doc' }))
